@@ -9,9 +9,10 @@ import XCTest
 @testable import feed
 
 final class StoryTest: XCTestCase {
-    private var bundle: Bundle?
+    private static var bundle: Bundle?
 
-    override func setUpWithError() throws {
+    override class func setUp() {
+        super.setUp()
         bundle = Bundle(for: Self.self)
     }
 
@@ -53,7 +54,7 @@ final class StoryTest: XCTestCase {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        return try bundle?.url(forResource: name, withExtension: "json")
+        return try Self.bundle?.url(forResource: name, withExtension: "json")
             .flatMap { try Data(contentsOf: $0) }
             .map { try decoder.decode(Story.self, from: $0) }
     }
