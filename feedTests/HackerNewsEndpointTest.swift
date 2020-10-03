@@ -13,5 +13,8 @@ final class HackerNewsEndpointTest: XCTestCase {
         XCTAssertEqual(
             HackerNewsEndpoint.topStories.url().absoluteString,
             "https://hacker-news.firebaseio.com/v0/topstories")
+        XCTAssertEqual(
+            ItemEndpoint(id: 123).url().absoluteString,
+            "https://hacker-news.firebaseio.com/v0/item/123.json")
     }
 }

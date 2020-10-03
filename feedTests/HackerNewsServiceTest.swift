@@ -47,4 +47,29 @@ final class HackerNewsServiceTest: XCTestCase {
         }
         wait(for: [promise], timeout: 1)
     }
+
+    func testLoadStory() throws {
+        let apiClient = APIClientMock(dataFromFilename: "story", ext: "json")
+        let service = HackerNewsService(apiClient: apiClient)
+        let promise = XCTestExpectation()
+
+        service.loadItem(id: 0) { (result: Result<Story, Error>) in
+            switch result {
+            case let .success(story):
+                XCTAssertEqual(story.author, "dhouston")
+                XCTAssertEqual(story.numberOfComments, 71)
+                XCTAssertEqual(story.id, 8863)
+                XCTAssertEqual(story.commentIds, [8952, 8876])
+                XCTAssertEqual(story.score, 11122223)
+                XCTAssertEqual(story.creationTime, Date(timeIntervalSince1970: 1175714200))
+                XCTAssertEqual(story.title, "Prism. The perfect OAS (Swagger) companion.")
+                XCTAssertEqual(story.type, .story)
+                XCTAssertEqual(story.url, URL(string: "http://stoplight.io/prism/"))
+            case .failure:
+                XCTFail()
+            }
+            promise.fulfill()
+        }
+        wait(for: [promise], timeout: 1)
+    }
 }

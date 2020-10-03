@@ -36,6 +36,20 @@ final class StoryTest: XCTestCase {
         XCTAssertNil(story.url)
     }
 
+    func testInit() throws {
+        let id = 123
+        let story = Story(id: id)
+        XCTAssertNil(story.author)
+        XCTAssertNil(story.numberOfComments)
+        XCTAssertEqual(story.id, id)
+        XCTAssertNil(story.commentIds)
+        XCTAssertNil(story.score)
+        XCTAssertNil(story.creationTime)
+        XCTAssertNil(story.title)
+        XCTAssertEqual(story.type, .story)
+        XCTAssertNil(story.url)
+    }
+
     private func decodeStory(name: String) throws -> Story? {
         let bundle = Bundle(for: Self.self)
         let decoder = JSONDecoder()

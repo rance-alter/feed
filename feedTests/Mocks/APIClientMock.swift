@@ -8,13 +8,20 @@
 import Foundation
 @testable import feed
 
-struct APIClientMock: APIClientProtocol {
+final class APIClientMock: APIClientProtocol {
     private let data: Data?
     private let error: Error?
 
     init(jsonString: String? = nil, error: Error? = nil) {
-        self.data = jsonString?.data(using: .utf8)
+        data = jsonString?.data(using: .utf8)
         self.error = error
+    }
+
+    init(dataFromFilename filename: String, ext: String) {
+        let bundle = Bundle(for: Self.self)
+        data = try? bundle.url(forResource: filename, withExtension: ext)
+            .flatMap { try Data(contentsOf: $0) }
+        error = nil
     }
 
     func get(_ url: URL, completion: @escaping (Result<Data, Error>) -> Void) {

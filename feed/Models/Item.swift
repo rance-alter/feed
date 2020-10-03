@@ -33,4 +33,14 @@ class Item: Decodable {
         case isDead = "dead"
         case commentIds = "kids"
     }
+
+    init(id: Int, type: ItemType) {
+        self.id = id
+        isDeleted = nil
+        self.type = type
+        author = nil
+        creationTime = nil
+        isDead = nil
+        commentIds = nil
+    }
 }

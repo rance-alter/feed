@@ -7,20 +7,39 @@
 
 import Foundation
 
-enum HackerNewsEndpoint: String {
-    case topStories = "topstories"
-}
+private let baseURL = URL(string: "https://hacker-news.firebaseio.com")!
 
 enum HackerNewsAPIVersion: String {
     case v0
 }
 
-extension HackerNewsEndpoint {
-    private static let baseURL = URL(string: "https://hacker-news.firebaseio.com")!
+protocol HackerNewsEndpointProtocol {
+    func url(_ version: HackerNewsAPIVersion) -> URL
+}
+
+extension HackerNewsEndpointProtocol {
+    func url(_ version: HackerNewsAPIVersion = .v0) -> URL {
+        url(version)
+    }
+}
+
+enum HackerNewsEndpoint: String, HackerNewsEndpointProtocol {
+    case topStories = "topstories"
 
     func url(_ version: HackerNewsAPIVersion = .v0) -> URL {
-        Self.baseURL
+        baseURL
             .appendingPathComponent(version.rawValue)
             .appendingPathComponent(self.rawValue)
+    }
+}
+
+struct ItemEndpoint: HackerNewsEndpointProtocol {
+    let id: Int
+
+    func url(_ version: HackerNewsAPIVersion) -> URL {
+        baseURL
+            .appendingPathComponent(version.rawValue)
+            .appendingPathComponent("item")
+            .appendingPathComponent("\(id).json")
     }
 }

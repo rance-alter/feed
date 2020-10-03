@@ -28,4 +28,12 @@ final class Story: Item {
         url = try container.decodeIfPresent(URL.self, forKey: .url)
         try super.init(from: decoder)
     }
+
+    init(id: Int) {
+        numberOfComments = nil
+        score = nil
+        title = nil
+        url = nil
+        super.init(id: id, type: .story)
+    }
 }
