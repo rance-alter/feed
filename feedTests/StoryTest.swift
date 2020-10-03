@@ -8,8 +8,7 @@
 import XCTest
 @testable import feed
 
-class StoryTest: XCTestCase {
-
+final class StoryTest: XCTestCase {
     private var bundle: Bundle?
 
     override func setUpWithError() throws {

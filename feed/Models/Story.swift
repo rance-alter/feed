@@ -22,10 +22,10 @@ final class Story: Item {
 
     required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.numberOfComments = try container.decodeIfPresent(Int.self, forKey: .numberOfComments)
-        self.score = try container.decodeIfPresent(Int.self, forKey: .score)
-        self.title = try container.decodeIfPresent(String.self, forKey: .title)
-        self.url = try container.decodeIfPresent(URL.self, forKey: .url)
+        numberOfComments = try container.decodeIfPresent(Int.self, forKey: .numberOfComments)
+        score = try container.decodeIfPresent(Int.self, forKey: .score)
+        title = try container.decodeIfPresent(String.self, forKey: .title)
+        url = try container.decodeIfPresent(URL.self, forKey: .url)
         try super.init(from: decoder)
     }
 }
