@@ -9,19 +9,9 @@ import XCTest
 @testable import feed
 
 final class StoryTest: XCTestCase {
-    private static var bundle: Bundle?
-
-    override class func setUp() {
-        super.setUp()
-        bundle = Bundle(for: Self.self)
-    }
 
     func testDecodingNormalJSON() throws {
-        let name = "story"
-        guard let story = try decodeStory(name: name) else {
-            XCTFail("Failed to load \(name).json")
-            return
-        }
+        let story = try decodeStory(name: "story")!
         XCTAssertEqual(story.author, "dhouston")
         XCTAssertEqual(story.numberOfComments, 71)
         XCTAssertEqual(story.id, 8863)
@@ -34,11 +24,7 @@ final class StoryTest: XCTestCase {
     }
 
     func testDecodingTinyJSON() throws {
-        let name = "story_tiny"
-        guard let story = try decodeStory(name: name) else {
-            XCTFail("Failed to load \(name).json")
-            return
-        }
+        let story = try decodeStory(name: "story_tiny")!
         XCTAssertNil(story.author)
         XCTAssertNil(story.numberOfComments)
         XCTAssertEqual(story.id, 8863)
@@ -51,10 +37,11 @@ final class StoryTest: XCTestCase {
     }
 
     private func decodeStory(name: String) throws -> Story? {
+        let bundle = Bundle(for: Self.self)
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .secondsSince1970
 
-        return try Self.bundle?.url(forResource: name, withExtension: "json")
+        return try bundle.url(forResource: name, withExtension: "json")
             .flatMap { try Data(contentsOf: $0) }
             .map { try decoder.decode(Story.self, from: $0) }
     }
