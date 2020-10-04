@@ -29,7 +29,7 @@ enum HackerNewsEndpoint: String, HackerNewsEndpointProtocol {
     func url(_ version: HackerNewsAPIVersion = .v0) -> URL {
         baseURL
             .appendingPathComponent(version.rawValue)
-            .appendingPathComponent(self.rawValue)
+            .appendingPathComponent("\(rawValue).json")
     }
 }
 

@@ -37,3 +37,9 @@ final class Story: Item {
         super.init(id: id, type: .story)
     }
 }
+
+extension Story: Equatable {
+    static func == (lhs: Story, rhs: Story) -> Bool {
+        lhs.id == rhs.id
+    }
+}

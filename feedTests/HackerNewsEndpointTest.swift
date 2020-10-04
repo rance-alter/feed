@@ -12,7 +12,7 @@ final class HackerNewsEndpointTest: XCTestCase {
     func testURL() throws {
         XCTAssertEqual(
             HackerNewsEndpoint.topStories.url().absoluteString,
-            "https://hacker-news.firebaseio.com/v0/topstories")
+            "https://hacker-news.firebaseio.com/v0/topstories.json")
         XCTAssertEqual(
             ItemEndpoint(id: 123).url().absoluteString,
             "https://hacker-news.firebaseio.com/v0/item/123.json")

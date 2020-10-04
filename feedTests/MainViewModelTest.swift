@@ -35,7 +35,8 @@ final class MainViewModelTest: XCTestCase {
             promise.fulfill()
         }
         wait(for: [promise], timeout: 1)
-        XCTAssertEqual(viewModel.stories, skeletonStories)
+        XCTAssertEqual(viewModel.numberOfItems, ids.count)
+        XCTAssertEqual((0 ..< ids.count).map { viewModel.story(at: $0) }, skeletonStories)
 
         let promise2 = XCTestExpectation()
         service.error = SomeError.some
@@ -44,7 +45,8 @@ final class MainViewModelTest: XCTestCase {
             promise2.fulfill()
         }
         wait(for: [promise2], timeout: 1)
-        XCTAssertEqual(viewModel.stories, skeletonStories)
+        XCTAssertEqual(viewModel.numberOfItems, ids.count)
+        XCTAssertEqual((0 ..< ids.count).map { viewModel.story(at: $0) }, skeletonStories)
     }
 
     func testLoadStory() throws {
@@ -55,8 +57,8 @@ final class MainViewModelTest: XCTestCase {
             promise.fulfill()
         }
         wait(for: [promise], timeout: 1)
-        XCTAssertNil(viewModel.stories[1].author)
-        XCTAssertEqual(viewModel.stories[1].id, 8863)
+        XCTAssertNil(viewModel.story(at: 1)?.author)
+        XCTAssertEqual(viewModel.story(at: 1)?.id, 8863)
 
         let story: Story = JSONLoader.load(filename: "story")!
         let promise2 = XCTestExpectation()
@@ -65,8 +67,8 @@ final class MainViewModelTest: XCTestCase {
             promise2.fulfill()
         }
         wait(for: [promise2], timeout: 1)
-        XCTAssertEqual(viewModel.stories[1].author, "dhouston")
-        XCTAssertEqual(viewModel.stories[1].id, 8863)
+        XCTAssertEqual(viewModel.story(at: 1)?.author, "dhouston")
+        XCTAssertEqual(viewModel.story(at: 1)?.id, 8863)
 
         let storyDeleted: Story = JSONLoader.load(filename: "story_deleted")!
         let promise3 = XCTestExpectation()
@@ -75,6 +77,6 @@ final class MainViewModelTest: XCTestCase {
             promise3.fulfill()
         }
         wait(for: [promise3], timeout: 1)
-        XCTAssertEqual(viewModel.stories.map { $0.id }, [1, 3])
+        XCTAssertEqual(viewModel.numberOfItems, 2)
     }
 }

@@ -16,6 +16,18 @@ final class AppCoordinator: Coordinator {
 
     override func start() {
         window.makeKeyAndVisible()
-        window.rootViewController = MainViewController()
+        let mainVC = MainViewController()
+        mainVC.delegate = self
+        window.rootViewController = mainVC
+    }
+}
+
+extension AppCoordinator: MainViewControllerDelegate {
+
+    func onLoadPageFailure(from viewController: UIViewController) {
+        let alertVC = UIAlertController(title: "Failed to load page", message: nil, preferredStyle: .alert)
+        let action = UIAlertAction(title: "OK", style: .cancel)
+        alertVC.addAction(action)
+        viewController.present(alertVC, animated: true)
     }
 }

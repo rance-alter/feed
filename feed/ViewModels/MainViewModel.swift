@@ -8,20 +8,19 @@
 import Foundation
 
 protocol MainViewModelProtocol {
+    var numberOfItems: Int { get }
+    func story(at index: Int) -> Story?
+
     func loadTopStories(completion: @escaping (Error?) -> Void)
     func loadStory(_ story: Story, completion: @escaping () -> Void)
 }
 
 final class MainViewModel: MainViewModelProtocol {
-    enum Section {
-        case topStories
-    }
-
     private let service: HackerNewsServiceProtocol
     private let queue = DispatchQueue(label: "tw.rance.feed.stories", attributes: .concurrent)
     private var _stories = [Story]()
 
-    private(set) var stories: [Story] {
+    private var stories: [Story] {
         get {
             queue.sync { _stories }
         }
@@ -34,6 +33,17 @@ final class MainViewModel: MainViewModelProtocol {
 
     init(service: HackerNewsServiceProtocol = HackerNewsService()) {
         self.service = service
+    }
+
+    var numberOfItems: Int {
+        stories.count
+    }
+
+    func story(at index: Int) -> Story? {
+        queue.sync {
+            guard 0 ..< _stories.count ~= index else { return nil }
+            return _stories[index]
+        }
     }
 
     func loadTopStories(completion: @escaping (Error?) -> Void) {
