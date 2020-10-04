@@ -21,7 +21,7 @@ final class HackerNewsService: HackerNewsServiceProtocol {
         return decoder
     }()
 
-    init(apiClient: APIClientProtocol = APIClient()) {
+    init(apiClient: APIClientProtocol = SkippableAPIClient()) {
         self.apiClient = apiClient
     }
 

@@ -15,7 +15,7 @@ protocol APIClientProtocol {
     func get(_ url: URL, completion: @escaping (Result<Data, Error>) -> Void)
 }
 
-final class APIClient: APIClientProtocol {
+class APIClient: APIClientProtocol {
     private let urlSession: URLSession
 
     init(urlSession: URLSession = .shared) {

@@ -12,7 +12,7 @@ final class StoryTableViewCell: UITableViewCell {
 
     private let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title2)
+        label.font = .preferredFont(forTextStyle: .title3)
         label.textColor = .black
         label.numberOfLines = 0
         return label
@@ -20,7 +20,7 @@ final class StoryTableViewCell: UITableViewCell {
 
     private let subtitleLabel: UILabel = {
         let label = UILabel()
-        label.font = .preferredFont(forTextStyle: .title3)
+        label.font = .preferredFont(forTextStyle: .footnote)
         label.textColor = .gray
         label.numberOfLines = 0
         return label
