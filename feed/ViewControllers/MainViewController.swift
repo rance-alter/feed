@@ -46,9 +46,8 @@ final class MainViewController: UIViewController {
                 guard let sself = self else { return }
                 if error != nil {
                     sself.delegate?.onLoadPageFailure(from: sself)
-                } else {
-                    sself.tableView.reloadData()
                 }
+                sself.tableView.reloadData()
             }
         }
     }

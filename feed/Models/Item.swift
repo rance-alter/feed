@@ -13,6 +13,7 @@ enum ItemType: String, Decodable {
     case comment
     case poll
     case pollopt
+    case unknown
 }
 
 class Item: Decodable {
@@ -22,7 +23,6 @@ class Item: Decodable {
     let author: String?
     let creationTime: Date?
     let isDead: Bool?
-    let commentIds: [Int]?
 
     enum CodingKeys: String, CodingKey {
         case id
@@ -31,7 +31,6 @@ class Item: Decodable {
         case author = "by"
         case creationTime = "time"
         case isDead = "dead"
-        case commentIds = "kids"
     }
 
     var isLoaded: Bool {
@@ -42,13 +41,19 @@ class Item: Decodable {
         isDeleted == true || isDead == true
     }
 
-    init(id: Int, type: ItemType) {
+    init(
+        id: Int,
+        isDeleted: Bool? = nil,
+        type: ItemType,
+        author: String? = nil,
+        creationTime: Date? = nil,
+        isDead: Bool? = nil) {
+
         self.id = id
-        isDeleted = nil
+        self.isDeleted = isDeleted
         self.type = type
-        author = nil
-        creationTime = nil
-        isDead = nil
-        commentIds = nil
+        self.author = author
+        self.creationTime = creationTime
+        self.isDead = isDead
     }
 }

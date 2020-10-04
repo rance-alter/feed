@@ -59,7 +59,6 @@ final class HackerNewsServiceTest: XCTestCase {
                 XCTAssertEqual(story.author, "dhouston")
                 XCTAssertEqual(story.numberOfComments, 71)
                 XCTAssertEqual(story.id, 8863)
-                XCTAssertEqual(story.commentIds, [8952, 8876])
                 XCTAssertEqual(story.score, 11122223)
                 XCTAssertEqual(story.creationTime, Date(timeIntervalSince1970: 1175714200))
                 XCTAssertEqual(story.title, "Prism. The perfect OAS (Swagger) companion.")

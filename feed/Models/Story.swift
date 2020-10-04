@@ -36,6 +36,21 @@ final class Story: Item {
         url = nil
         super.init(id: id, type: .story)
     }
+
+    init(realm: RealmStory) {
+        numberOfComments = realm.numberOfComments
+        score = realm.score
+        title = realm.title
+        url = realm.url.flatMap { URL(string: $0) }
+
+        super.init(
+            id: realm.id,
+            isDeleted: realm.isDeleted,
+            type: .story,
+            author: realm.author,
+            creationTime: realm.creationTime,
+            isDead: realm.isDead)
+    }
 }
 
 extension Story: Equatable {

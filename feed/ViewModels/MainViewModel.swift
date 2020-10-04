@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import RealmSwift
 
 enum MainViewModelError: Error {
     case hiddenItem
@@ -21,6 +22,7 @@ protocol MainViewModelProtocol {
 
 final class MainViewModel: MainViewModelProtocol {
     private let service: HackerNewsServiceProtocol
+    private let realmProvider: RealmProvidering
     private let queue = DispatchQueue(label: "tw.rance.feed.stories", attributes: .concurrent)
     private var _stories = [Story]()
 
@@ -35,8 +37,12 @@ final class MainViewModel: MainViewModelProtocol {
         }
     }
 
-    init(service: HackerNewsServiceProtocol = HackerNewsService()) {
+    init(
+        service: HackerNewsServiceProtocol = HackerNewsService(),
+        realmProvider: RealmProvidering = RealmProvider()) {
+
         self.service = service
+        self.realmProvider = realmProvider
     }
 
     var numberOfItems: Int {
@@ -53,11 +59,22 @@ final class MainViewModel: MainViewModelProtocol {
     func loadTopStories(completion: @escaping (Error?) -> Void) {
         service.loadTopStories { [weak self] result in
             guard let sself = self else { return }
+            let realm = sself.realmProvider.realm()
+
             switch result {
             case let .success(ids):
-                sself.stories = ids.map { Story(id: $0) }
+                let stories = ids.map { Story(id: $0) }
+                sself.stories = stories
+
+                let realmStories = stories.map { RealmStory(story: $0) }
+                try? realm.write {
+                    realm.deleteAll()
+                    realm.add(realmStories)
+                }
                 completion(nil)
             case let .failure(error):
+                let realmStories = realm.objects(RealmStory.self)
+                sself.stories = realmStories.map { Story(realm: $0) }
                 completion(error)
             }
         }
@@ -71,11 +88,20 @@ final class MainViewModel: MainViewModelProtocol {
             switch result {
             case let .success(story):
                 if let index = sself.stories.firstIndex(of: story) {
+                    let realm = sself.realmProvider.realm()
                     if story.isHidden {
                         sself.stories.remove(at: index)
+
+                        let realmStories = realm.objects(RealmStory.self).filter("id = \(story.id)")
+                        try? realm.write {
+                            realm.delete(realmStories)
+                        }
                         completion(.failure(MainViewModelError.hiddenItem))
                     } else {
                         sself.stories[index] = story
+                        try? realm.write {
+                            realm.add(RealmStory(story: story), update: .modified)
+                        }
                         completion(.success(story))
                     }
                 }

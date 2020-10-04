@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import RealmSwift
 @testable import feed
 
 private enum SomeError: Error {
@@ -14,9 +15,10 @@ private enum SomeError: Error {
 
 final class MainViewModelTest: XCTestCase {
     private let service = HackerNewsServiceMock()
+    private let realmProvider = RealTestProvider()
 
     private lazy var viewModel: MainViewModel = {
-        MainViewModel(service: self.service)
+        MainViewModel(service: self.service, realmProvider: self.realmProvider)
     }()
 
     override func setUpWithError() throws {
@@ -27,6 +29,7 @@ final class MainViewModelTest: XCTestCase {
 
     func testLoadStories() throws {
         let ids = [1, 2, 3]
+        let realm = realmProvider.realm()
         let skeletonStories = ids.map { Story(id: $0) }
         let promise = XCTestExpectation()
         service.topStoryIds = ids
@@ -37,6 +40,8 @@ final class MainViewModelTest: XCTestCase {
         wait(for: [promise], timeout: 1)
         XCTAssertEqual(viewModel.numberOfItems, ids.count)
         XCTAssertEqual((0 ..< ids.count).map { viewModel.story(at: $0) }, skeletonStories)
+        let realmStories = realm.objects(RealmStory.self)
+        XCTAssertEqual(realmStories.count, 3)
 
         let promise2 = XCTestExpectation()
         service.error = SomeError.some
@@ -51,6 +56,7 @@ final class MainViewModelTest: XCTestCase {
 
     func testLoadStory() throws {
         let ids = [1, 8863, 3]
+        let realm = realmProvider.realm()
         let promise = XCTestExpectation()
         service.topStoryIds = ids
         viewModel.loadTopStories { error in
@@ -76,6 +82,9 @@ final class MainViewModelTest: XCTestCase {
         wait(for: [promise2], timeout: 1)
         XCTAssertEqual(viewModel.story(at: 1)?.author, "dhouston")
         XCTAssertEqual(viewModel.story(at: 1)?.id, 8863)
+        let realmStory = realm.objects(RealmStory.self).filter("id = 8863").first
+        XCTAssertEqual(realmStory?.author, "dhouston")
+        XCTAssertEqual(realmStory?.id, 8863)
 
         let storyDeleted: Story = JSONLoader.load(filename: "story_deleted")!
         let promise3 = XCTestExpectation()
@@ -91,5 +100,7 @@ final class MainViewModelTest: XCTestCase {
         }
         wait(for: [promise3], timeout: 1)
         XCTAssertEqual(viewModel.numberOfItems, 2)
+        let realmStories = realm.objects(RealmStory.self)
+        XCTAssertEqual(realmStories.count, 2)
     }
 }
