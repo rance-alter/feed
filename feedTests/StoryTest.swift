@@ -11,7 +11,7 @@ import XCTest
 final class StoryTest: XCTestCase {
 
     func testDecodingNormalJSON() throws {
-        let story = try decodeStory(name: "story")!
+        let story: Story = JSONLoader.load(filename: "story")!
         XCTAssertEqual(story.author, "dhouston")
         XCTAssertEqual(story.numberOfComments, 71)
         XCTAssertEqual(story.id, 8863)
@@ -24,7 +24,7 @@ final class StoryTest: XCTestCase {
     }
 
     func testDecodingTinyJSON() throws {
-        let story = try decodeStory(name: "story_tiny")!
+        let story: Story = JSONLoader.load(filename: "story_tiny")!
         XCTAssertNil(story.author)
         XCTAssertNil(story.numberOfComments)
         XCTAssertEqual(story.id, 8863)
@@ -48,15 +48,5 @@ final class StoryTest: XCTestCase {
         XCTAssertNil(story.title)
         XCTAssertEqual(story.type, .story)
         XCTAssertNil(story.url)
-    }
-
-    private func decodeStory(name: String) throws -> Story? {
-        let bundle = Bundle(for: Self.self)
-        let decoder = JSONDecoder()
-        decoder.dateDecodingStrategy = .secondsSince1970
-
-        return try bundle.url(forResource: name, withExtension: "json")
-            .flatMap { try Data(contentsOf: $0) }
-            .map { try decoder.decode(Story.self, from: $0) }
     }
 }
