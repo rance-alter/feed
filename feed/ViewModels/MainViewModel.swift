@@ -7,12 +7,16 @@
 
 import Foundation
 
+enum MainViewModelError: Error {
+    case hiddenItem
+}
+
 protocol MainViewModelProtocol {
     var numberOfItems: Int { get }
     func story(at index: Int) -> Story?
 
     func loadTopStories(completion: @escaping (Error?) -> Void)
-    func loadStory(_ story: Story, completion: @escaping () -> Void)
+    func loadStory(_ story: Story, completion: @escaping (Result<Story, Error>) -> Void)
 }
 
 final class MainViewModel: MainViewModelProtocol {
@@ -59,24 +63,25 @@ final class MainViewModel: MainViewModelProtocol {
         }
     }
 
-    func loadStory(_ story: Story, completion: @escaping () -> Void) {
-        guard story.creationTime == nil else { return }
+    func loadStory(_ story: Story, completion: @escaping (Result<Story, Error>) -> Void) {
+        guard !story.isLoaded else { return }
 
         service.loadItem(id: story.id) { [weak self] (result: Result<Story, Error>) in
             guard let sself = self else { return }
             switch result {
             case let .success(story):
                 if let index = sself.stories.firstIndex(of: story) {
-                    if story.isDeleted == true || story.isDead == true {
+                    if story.isHidden {
                         sself.stories.remove(at: index)
+                        completion(.failure(MainViewModelError.hiddenItem))
                     } else {
                         sself.stories[index] = story
+                        completion(.success(story))
                     }
                 }
-            case .failure:
-                break
+            case let .failure(error):
+                completion(.failure(error))
             }
-            completion()
         }
     }
 }

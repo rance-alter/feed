@@ -8,18 +8,15 @@
 import UIKit
 
 protocol StoryTableViewCellViewModelProtocol {
-    var isLoaded: Bool { get }
     var title: String { get }
     var subtitle: String { get }
 }
 
 struct StoryTableViewCellViewModel: StoryTableViewCellViewModelProtocol {
-    let isLoaded: Bool
     let title: String
     let subtitle: String
 
     init(story: Story, now: Date = Date()) {
-        isLoaded = story.creationTime != nil
         title = story.title ?? "No title"
 
         let formatter = RelativeDateTimeFormatter()

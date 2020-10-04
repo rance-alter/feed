@@ -63,7 +63,14 @@ final class MainViewModelTest: XCTestCase {
         let story: Story = JSONLoader.load(filename: "story")!
         let promise2 = XCTestExpectation()
         service.item = story
-        viewModel.loadStory(Story(id: 8863)) {
+        viewModel.loadStory(Story(id: 8863)) { result in
+            switch result {
+            case let .success(story):
+                XCTAssertEqual(story.author, "dhouston")
+                XCTAssertEqual(story.id, 8863)
+            case .failure:
+                XCTFail()
+            }
             promise2.fulfill()
         }
         wait(for: [promise2], timeout: 1)
@@ -73,7 +80,13 @@ final class MainViewModelTest: XCTestCase {
         let storyDeleted: Story = JSONLoader.load(filename: "story_deleted")!
         let promise3 = XCTestExpectation()
         service.item = storyDeleted
-        viewModel.loadStory(Story(id: 8863)) {
+        viewModel.loadStory(Story(id: 8863)) { result in
+            switch result {
+            case .success:
+                XCTFail()
+            case let .failure(error):
+                XCTAssertEqual(error as? MainViewModelError, MainViewModelError.hiddenItem)
+            }
             promise3.fulfill()
         }
         wait(for: [promise3], timeout: 1)

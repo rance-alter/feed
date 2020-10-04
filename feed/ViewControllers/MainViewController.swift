@@ -78,22 +78,30 @@ extension MainViewController: UITableViewDataSource {
 
         if let story = viewModel.story(at: indexPath.row) {
             cell.configure(with: StoryTableViewCellViewModel(story: story))
+
+            if !story.isLoaded {
+                viewModel.loadStory(story) { result in
+                    DispatchQueue.main.async {
+                        switch result {
+                        case let .success(value):
+                            if value == story {
+                                tableView.reloadRows(at: [indexPath], with: .automatic)
+                            }
+                        case let .failure(error):
+                            if let error = error as? MainViewModelError, error == .hiddenItem {
+                                tableView.reloadData()
+                            }
+                        }
+                    }
+                }
+            }
         }
         return cell
     }
 }
 
 extension MainViewController: UITableViewDelegate {
-
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-
-    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
-        if let story = viewModel.story(at: indexPath.row) {
-            viewModel.loadStory(story) {
-                // TODO
-            }
-        }
     }
 }

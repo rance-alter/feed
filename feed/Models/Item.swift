@@ -34,6 +34,14 @@ class Item: Decodable {
         case commentIds = "kids"
     }
 
+    var isLoaded: Bool {
+        creationTime != nil
+    }
+
+    var isHidden: Bool {
+        isDeleted == true || isDead == true
+    }
+
     init(id: Int, type: ItemType) {
         self.id = id
         isDeleted = nil
