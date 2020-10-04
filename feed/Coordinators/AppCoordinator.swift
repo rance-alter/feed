@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import SafariServices
 
 final class AppCoordinator: Coordinator {
     private let window: UIWindow
@@ -29,5 +30,10 @@ extension AppCoordinator: MainViewControllerDelegate {
         let action = UIAlertAction(title: "OK", style: .cancel)
         alertVC.addAction(action)
         viewController.present(alertVC, animated: true)
+    }
+
+    func onTapURL(_ url: URL, from viewController: UIViewController) {
+        let safariVC = SFSafariViewController(url: url)
+        viewController.present(safariVC, animated: true)
     }
 }

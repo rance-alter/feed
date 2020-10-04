@@ -13,6 +13,7 @@ private enum Section {
 
 protocol MainViewControllerDelegate: class {
     func onLoadPageFailure(from viewController: UIViewController)
+    func onTapURL(_ url: URL, from viewController: UIViewController)
 }
 
 final class MainViewController: UIViewController {
@@ -103,5 +104,9 @@ extension MainViewController: UITableViewDataSource {
 extension MainViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+
+        if let url = viewModel.story(at: indexPath.row)?.url {
+            delegate?.onTapURL(url, from: self)
+        }
     }
 }
