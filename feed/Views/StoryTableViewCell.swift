@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PureLayout
 
 final class StoryTableViewCell: UITableViewCell {
     private let titleLabel: UILabel = {
@@ -35,24 +36,14 @@ final class StoryTableViewCell: UITableViewCell {
     }
 
     private func setupTitleLabel() {
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(titleLabel)
-        NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            titleLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8)
-        ])
+        titleLabel.autoPinEdges(toSuperviewMarginsExcludingEdge: .bottom)
     }
 
     private func setupSubtitleLabel() {
-        subtitleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(subtitleLabel)
-        NSLayoutConstraint.activate([
-            subtitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 8),
-            subtitleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 8),
-            subtitleLabel.trailingAnchor.constraint(lessThanOrEqualTo: contentView.trailingAnchor, constant: -8),
-            subtitleLabel.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
-        ])
+        subtitleLabel.autoPinEdge(.top, to: .bottom, of: titleLabel, withOffset: 8)
+        subtitleLabel.autoPinEdges(toSuperviewMarginsExcludingEdge: .top)
     }
 
     func configure(with viewModel: StoryTableViewCellViewModelProtocol) {

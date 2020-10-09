@@ -44,6 +44,8 @@
 		CE8F56C5252A745900C2BF10 /* RealmStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56C4252A745900C2BF10 /* RealmStory.swift */; };
 		CE8F56DB252E31CE00C2BF10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56DA252E31CE00C2BF10 /* LoadingTableViewCell.swift */; };
 		CE8F56DF253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56DE253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift */; };
+		CE8F56E325303CF300C2BF10 /* PureLayout.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8F56E225303CF300C2BF10 /* PureLayout.framework */; };
+		CE8F56E425303CF300C2BF10 /* PureLayout.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = CE8F56E225303CF300C2BF10 /* PureLayout.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		CEB2E9752527622100F7B7BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB2E9742527622100F7B7BE /* AppDelegate.swift */; };
 		CEB2E9772527622100F7B7BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB2E9762527622100F7B7BE /* SceneDelegate.swift */; };
 		CEB2E97E2527622400F7B7BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEB2E97D2527622400F7B7BE /* Assets.xcassets */; };
@@ -76,6 +78,7 @@
 			dstSubfolderSpec = 10;
 			files = (
 				CE8F56A9252A411100C2BF10 /* RealmSwift.framework in Embed Frameworks */,
+				CE8F56E425303CF300C2BF10 /* PureLayout.framework in Embed Frameworks */,
 				CE8F56A6252A411000C2BF10 /* Realm.framework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
@@ -117,6 +120,7 @@
 		CE8F56C4252A745900C2BF10 /* RealmStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmStory.swift; sourceTree = "<group>"; };
 		CE8F56DA252E31CE00C2BF10 /* LoadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingTableViewCell.swift; sourceTree = "<group>"; };
 		CE8F56DE253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+CellIdentifier.swift"; sourceTree = "<group>"; };
+		CE8F56E225303CF300C2BF10 /* PureLayout.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = PureLayout.framework; path = Carthage/Build/iOS/PureLayout.framework; sourceTree = "<group>"; };
 		CEB2E9712527622100F7B7BE /* feed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = feed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEB2E9742527622100F7B7BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEB2E9762527622100F7B7BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -136,6 +140,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE8F56A8252A411100C2BF10 /* RealmSwift.framework in Frameworks */,
+				CE8F56E325303CF300C2BF10 /* PureLayout.framework in Frameworks */,
 				CE8F56A5252A411000C2BF10 /* Realm.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -250,6 +255,7 @@
 		CE8F5698252A404B00C2BF10 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CE8F56E225303CF300C2BF10 /* PureLayout.framework */,
 				CE8F5699252A404C00C2BF10 /* Realm.framework */,
 				CE8F569A252A404C00C2BF10 /* RealmSwift.framework */,
 			);

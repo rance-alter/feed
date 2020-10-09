@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PureLayout
 
 protocol MainViewControllerDelegate: class {
     func onLoadPageFailure(from viewController: UIViewController)
@@ -52,14 +53,9 @@ final class MainViewController: UIViewController {
     }
 
     private func setupTableView() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(tableView)
-        NSLayoutConstraint.activate([
-            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor),
-            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor)
-        ])
+        tableView.autoPinEdge(toSuperviewSafeArea: .top)
+        tableView.autoPinEdgesToSuperviewEdges(with: .zero, excludingEdge: .top)
     }
 }
 

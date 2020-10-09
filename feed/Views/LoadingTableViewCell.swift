@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import PureLayout
 
 class LoadingTableViewCell: UITableViewCell {
     let activityIndicator = UIActivityIndicatorView(style: .medium)
@@ -20,12 +21,10 @@ class LoadingTableViewCell: UITableViewCell {
     }
 
     private func setupActivityIndicator() {
-        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(activityIndicator)
-        NSLayoutConstraint.activate([
-            activityIndicator.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            activityIndicator.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 8),
-            activityIndicator.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -8)
-        ])
+        activityIndicator.autoAlignAxis(toSuperviewAxis: .vertical)
+        [ALEdge.top, .bottom].forEach {
+            activityIndicator.autoPinEdge(toSuperviewMargin: $0)
+        }
     }
 }
