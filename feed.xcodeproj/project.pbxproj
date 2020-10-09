@@ -169,9 +169,8 @@
 			children = (
 				CE8F54E7252766CD00C2BF10 /* MainViewController.swift */,
 			);
-			name = ViewControllers;
-			path = /Users/rancetsai/Desktop/feed/feed/ViewControllers;
-			sourceTree = "<absolute>";
+			path = ViewControllers;
+			sourceTree = "<group>";
 		};
 		CE8F54D6252765D600C2BF10 /* Coordinators */ = {
 			isa = PBXGroup;
@@ -179,9 +178,8 @@
 				CE8F54D72527660F00C2BF10 /* Coordinator.swift */,
 				CE8F54DF2527664900C2BF10 /* AppCoordinator.swift */,
 			);
-			name = Coordinators;
-			path = /Users/rancetsai/Desktop/feed/feed/Coordinators;
-			sourceTree = "<absolute>";
+			path = Coordinators;
+			sourceTree = "<group>";
 		};
 		CE8F54EC25276C6600C2BF10 /* Models */ = {
 			isa = PBXGroup;
