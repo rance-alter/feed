@@ -20,7 +20,6 @@ final class StoryTest: XCTestCase {
         XCTAssertEqual(story.title, "Prism. The perfect OAS (Swagger) companion.")
         XCTAssertEqual(story.type, .story)
         XCTAssertEqual(story.url, URL(string: "http://stoplight.io/prism/"))
-        XCTAssertTrue(story.isLoaded)
     }
 
     func testDecodingTinyJSON() throws {
@@ -33,7 +32,6 @@ final class StoryTest: XCTestCase {
         XCTAssertNil(story.title)
         XCTAssertEqual(story.type, .story)
         XCTAssertNil(story.url)
-        XCTAssertFalse(story.isLoaded)
     }
 
     func testInit() throws {

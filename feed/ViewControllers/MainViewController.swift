@@ -7,10 +7,6 @@
 
 import UIKit
 
-private enum Section {
-    case topStories
-}
-
 protocol MainViewControllerDelegate: class {
     func onLoadPageFailure(from viewController: UIViewController)
     func onTapURL(_ url: URL, from viewController: UIViewController)
@@ -19,12 +15,14 @@ protocol MainViewControllerDelegate: class {
 final class MainViewController: UIViewController {
     weak var delegate: MainViewControllerDelegate?
     private let viewModel: MainViewModelProtocol
+    private var nextID: Int?
 
     private lazy var tableView: UITableView = {
-        let view = UITableView(frame: .zero, style: .plain)
+        let view = UITableView(frame: .zero, style: .grouped)
         view.dataSource = self
         view.delegate = self
         view.register(StoryTableViewCell.self, forCellReuseIdentifier: StoryTableViewCell.cellIdentifier)
+        view.register(LoadingTableViewCell.self, forCellReuseIdentifier: LoadingTableViewCell.cellIdentifier)
         return view
     }()
 
@@ -41,9 +39,10 @@ final class MainViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupTableView()
-        viewModel.loadTopStories { [weak self] error in
+        viewModel.loadTopStories(id: nextID) { [weak self] nextID, error in
             DispatchQueue.main.async {
                 guard let sself = self else { return }
+                sself.nextID = nextID
                 if error != nil {
                     sself.delegate?.onLoadPageFailure(from: sself)
                 }
@@ -67,45 +66,49 @@ final class MainViewController: UIViewController {
 extension MainViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        viewModel.numberOfItems
+        viewModel.numberOfItems + 1
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard indexPath.row < viewModel.numberOfItems else {
+            let cell = tableView.dequeueReusableCell(
+                withIdentifier: LoadingTableViewCell.cellIdentifier,
+                for: indexPath)
+            (cell as? LoadingTableViewCell)?.activityIndicator.startAnimating()
+            return cell
+        }
         guard let cell = tableView.dequeueReusableCell(
                 withIdentifier: StoryTableViewCell.cellIdentifier,
                 for: indexPath) as? StoryTableViewCell
-        else { return UITableViewCell() }
-
+        else {
+            return UITableViewCell()
+        }
         if let story = viewModel.story(at: indexPath.row) {
             cell.configure(with: StoryTableViewCellViewModel(story: story))
-
-            if !story.isLoaded {
-                viewModel.loadStory(story) { result in
-                    DispatchQueue.main.async {
-                        switch result {
-                        case let .success(value):
-                            if value == story {
-                                tableView.reloadRows(at: [indexPath], with: .automatic)
-                            }
-                        case let .failure(error):
-                            if let error = error as? MainViewModelError, error == .hiddenItem {
-                                tableView.reloadData()
-                            }
-                        }
-                    }
-                }
-            }
         }
         return cell
     }
 }
 
 extension MainViewController: UITableViewDelegate {
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
         if let url = viewModel.story(at: indexPath.row)?.url {
             delegate?.onTapURL(url, from: self)
+        }
+    }
+
+    func tableView(_ tableView: UITableView, willDisplay cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        if indexPath.row == viewModel.numberOfItems - 1, nextID != nil {
+            viewModel.loadTopStories(id: nextID) { [weak self] nextID, _ in
+                DispatchQueue.main.async {
+                    guard let sself = self else { return }
+                    sself.nextID = nextID
+                    tableView.reloadData()
+                }
+            }
         }
     }
 }

@@ -22,85 +22,47 @@ final class MainViewModelTest: XCTestCase {
     }()
 
     override func setUpWithError() throws {
-        service.topStoryIds = []
-        service.item = nil
-        service.error = nil
+        service.dataSource = nil
     }
 
     func testLoadStories() throws {
-        let ids = [1, 2, 3]
-        let realm = realmProvider.realm()
-        let skeletonStories = ids.map { Story(id: $0) }
+        let ids = [Int](0 ..< 40)
         let promise = XCTestExpectation()
-        service.topStoryIds = ids
-        viewModel.loadTopStories { error in
+        let dataSource = HackerNewsServiceMockDataSource()
+        var nextID: Int?
+        dataSource.topStoryIDs = ids
+        dataSource.itemMap = ids.reduce(into: [:]) {
+            $0[$1] = Story(id: $1)
+        }
+        service.dataSource = dataSource
+        viewModel.loadTopStories(id: nil) { id, error in
+            nextID = id
+            XCTAssertEqual(id, 20)
             XCTAssertNil(error)
+            let realm = self.realmProvider.realm()
+            let realmStories = realm.objects(RealmStory.self)
+            XCTAssertEqual(realmStories.count, 20)
             promise.fulfill()
         }
         wait(for: [promise], timeout: 1)
-        XCTAssertEqual(viewModel.numberOfItems, ids.count)
-        XCTAssertEqual((0 ..< ids.count).map { viewModel.story(at: $0) }, skeletonStories)
-        let realmStories = realm.objects(RealmStory.self)
-        XCTAssertEqual(realmStories.count, 3)
+        XCTAssertEqual(viewModel.numberOfItems, 20)
+        XCTAssertEqual(
+            (0 ..< 20).map { viewModel.story(at: $0) },
+            (0 ..< 20).map { Story(id: $0) })
 
         let promise2 = XCTestExpectation()
-        service.error = SomeError.some
-        viewModel.loadTopStories { error in
-            XCTAssertEqual(error as? SomeError, SomeError.some)
+        viewModel.loadTopStories(id: nextID) { id, error in
+            XCTAssertNil(id)
+            XCTAssertNil(error)
+            let realm = self.realmProvider.realm()
+            let realmStories = realm.objects(RealmStory.self)
+            XCTAssertEqual(realmStories.count, 40)
             promise2.fulfill()
         }
         wait(for: [promise2], timeout: 1)
-        XCTAssertEqual(viewModel.numberOfItems, ids.count)
-        XCTAssertEqual((0 ..< ids.count).map { viewModel.story(at: $0) }, skeletonStories)
-    }
-
-    func testLoadStory() throws {
-        let ids = [1, 8863, 3]
-        let realm = realmProvider.realm()
-        let promise = XCTestExpectation()
-        service.topStoryIds = ids
-        viewModel.loadTopStories { error in
-            promise.fulfill()
-        }
-        wait(for: [promise], timeout: 1)
-        XCTAssertNil(viewModel.story(at: 1)?.author)
-        XCTAssertEqual(viewModel.story(at: 1)?.id, 8863)
-
-        let story: Story = JSONLoader.load(filename: "story")!
-        let promise2 = XCTestExpectation()
-        service.item = story
-        viewModel.loadStory(Story(id: 8863)) { result in
-            switch result {
-            case let .success(story):
-                XCTAssertEqual(story.author, "dhouston")
-                XCTAssertEqual(story.id, 8863)
-            case .failure:
-                XCTFail()
-            }
-            promise2.fulfill()
-        }
-        wait(for: [promise2], timeout: 1)
-        XCTAssertEqual(viewModel.story(at: 1)?.author, "dhouston")
-        XCTAssertEqual(viewModel.story(at: 1)?.id, 8863)
-        let realmStory = realm.objects(RealmStory.self).filter("id = 8863").first
-        XCTAssertEqual(realmStory?.author, "dhouston")
-        XCTAssertEqual(realmStory?.id, 8863)
-
-        let storyDeleted: Story = JSONLoader.load(filename: "story_deleted")!
-        let promise3 = XCTestExpectation()
-        service.item = storyDeleted
-        viewModel.loadStory(Story(id: 8863)) { result in
-            switch result {
-            case .success:
-                XCTFail()
-            case let .failure(error):
-                XCTAssertEqual(error as? MainViewModelError, MainViewModelError.hiddenItem)
-            }
-            promise3.fulfill()
-        }
-        wait(for: [promise3], timeout: 1)
-        XCTAssertEqual(viewModel.numberOfItems, 2)
-        let realmStories = realm.objects(RealmStory.self)
-        XCTAssertEqual(realmStories.count, 2)
+        XCTAssertEqual(viewModel.numberOfItems, 40)
+        XCTAssertEqual(
+            (0 ..< 40).map { viewModel.story(at: $0) },
+            (0 ..< 40).map { Story(id: $0) })
     }
 }

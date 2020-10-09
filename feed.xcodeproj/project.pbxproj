@@ -42,6 +42,8 @@
 		CE8F56BE252A6C0F00C2BF10 /* RealmSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8F569A252A404C00C2BF10 /* RealmSwift.framework */; };
 		CE8F56BF252A6C1000C2BF10 /* Realm.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CE8F5699252A404C00C2BF10 /* Realm.framework */; };
 		CE8F56C5252A745900C2BF10 /* RealmStory.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56C4252A745900C2BF10 /* RealmStory.swift */; };
+		CE8F56DB252E31CE00C2BF10 /* LoadingTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56DA252E31CE00C2BF10 /* LoadingTableViewCell.swift */; };
+		CE8F56DF253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift in Sources */ = {isa = PBXBuildFile; fileRef = CE8F56DE253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift */; };
 		CEB2E9752527622100F7B7BE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB2E9742527622100F7B7BE /* AppDelegate.swift */; };
 		CEB2E9772527622100F7B7BE /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CEB2E9762527622100F7B7BE /* SceneDelegate.swift */; };
 		CEB2E97E2527622400F7B7BE /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CEB2E97D2527622400F7B7BE /* Assets.xcassets */; };
@@ -113,6 +115,8 @@
 		CE8F56B6252A67FC00C2BF10 /* RealmProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmProvider.swift; sourceTree = "<group>"; };
 		CE8F56BA252A69F000C2BF10 /* RealTestProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealTestProvider.swift; sourceTree = "<group>"; };
 		CE8F56C4252A745900C2BF10 /* RealmStory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmStory.swift; sourceTree = "<group>"; };
+		CE8F56DA252E31CE00C2BF10 /* LoadingTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadingTableViewCell.swift; sourceTree = "<group>"; };
+		CE8F56DE253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UITableViewCell+CellIdentifier.swift"; sourceTree = "<group>"; };
 		CEB2E9712527622100F7B7BE /* feed.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = feed.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CEB2E9742527622100F7B7BE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CEB2E9762527622100F7B7BE /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -238,6 +242,7 @@
 			isa = PBXGroup;
 			children = (
 				CE8F566B2529FF4C00C2BF10 /* StoryTableViewCell.swift */,
+				CE8F56DA252E31CE00C2BF10 /* LoadingTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -255,6 +260,7 @@
 			isa = PBXGroup;
 			children = (
 				CE8F56B6252A67FC00C2BF10 /* RealmProvider.swift */,
+				CE8F56DE253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -483,12 +489,14 @@
 			buildActionMask = 2147483647;
 			files = (
 				CE8F56612529F2B900C2BF10 /* StoryTableViewCellViewModel.swift in Sources */,
+				CE8F56DB252E31CE00C2BF10 /* LoadingTableViewCell.swift in Sources */,
 				CE8F54D82527660F00C2BF10 /* Coordinator.swift in Sources */,
 				CE8F54E02527664900C2BF10 /* AppCoordinator.swift in Sources */,
 				CE8F55B82528A9F000C2BF10 /* HackerNewsService.swift in Sources */,
 				CEB2E9752527622100F7B7BE /* AppDelegate.swift in Sources */,
 				CE8F5554252790AB00C2BF10 /* APIClient.swift in Sources */,
 				CEB2E9772527622100F7B7BE /* SceneDelegate.swift in Sources */,
+				CE8F56DF253035E900C2BF10 /* UITableViewCell+CellIdentifier.swift in Sources */,
 				CE8F552425277B5900C2BF10 /* Item.swift in Sources */,
 				CE8F55BD2528AE1D00C2BF10 /* HackerNewsEndpoint.swift in Sources */,
 				CE8F566C2529FF4C00C2BF10 /* StoryTableViewCell.swift in Sources */,

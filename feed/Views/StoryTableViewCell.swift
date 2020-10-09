@@ -8,8 +8,6 @@
 import UIKit
 
 final class StoryTableViewCell: UITableViewCell {
-    static let cellIdentifier = "StoryTableCell"
-
     private let titleLabel: UILabel = {
         let label = UILabel()
         label.font = .preferredFont(forTextStyle: .title3)

@@ -15,15 +15,16 @@ enum MainViewModelError: Error {
 protocol MainViewModelProtocol {
     var numberOfItems: Int { get }
     func story(at index: Int) -> Story?
-
-    func loadTopStories(completion: @escaping (Error?) -> Void)
-    func loadStory(_ story: Story, completion: @escaping (Result<Story, Error>) -> Void)
+    func loadTopStories(id: Int?, completion: @escaping (Int?, Error?) -> Void)
 }
 
 final class MainViewModel: MainViewModelProtocol {
+    private static let pageSize = 20
+
     private let service: HackerNewsServiceProtocol
     private let realmProvider: RealmProvidering
     private let queue = DispatchQueue(label: "tw.rance.feed.stories", attributes: .concurrent)
+    private var storyIDs = [Int]()
     private var _stories = [Story]()
 
     private var stories: [Story] {
@@ -56,58 +57,72 @@ final class MainViewModel: MainViewModelProtocol {
         }
     }
 
-    func loadTopStories(completion: @escaping (Error?) -> Void) {
-        service.loadTopStories { [weak self] result in
-            guard let sself = self else { return }
-            let realm = sself.realmProvider.realm()
-
-            switch result {
-            case let .success(ids):
-                let stories = ids.map { Story(id: $0) }
-                sself.stories = stories
-
-                let realmStories = stories.map { RealmStory(story: $0) }
-                try? realm.write {
-                    realm.deleteAll()
-                    realm.add(realmStories)
+    func loadTopStories(id: Int?, completion: @escaping (Int?, Error?) -> Void) {
+        if let id = id {
+            loadStories(id: id) { nextID in
+                completion(nextID, nil)
+            }
+        } else {
+            service.loadTopStories { [weak self] result in
+                guard let sself = self else { return }
+                let realm = sself.realmProvider.realm()
+                switch result {
+                case let .success(ids):
+                    sself.storyIDs = ids
+                    sself.stories.removeAll()
+                    try? realm.write {
+                        realm.deleteAll()
+                    }
+                    sself.loadStories { nextID in
+                        completion(nextID, nil)
+                    }
+                case let .failure(error):
+                    let realmStories = realm.objects(RealmStory.self)
+                    sself.stories = realmStories.map { Story(realm: $0) }
+                    completion(nil, error)
                 }
-                completion(nil)
-            case let .failure(error):
-                let realmStories = realm.objects(RealmStory.self)
-                sself.stories = realmStories.map { Story(realm: $0) }
-                completion(error)
             }
         }
     }
 
-    func loadStory(_ story: Story, completion: @escaping (Result<Story, Error>) -> Void) {
-        guard !story.isLoaded else { return }
+    private func loadStories(id: Int = 0, completion: @escaping (Int?) -> Void) {
+        let index = storyIDs.firstIndex(of: id) ?? 0
+        let ids = Array(storyIDs[index ..< min(index + Self.pageSize, storyIDs.endIndex)])
+        let nextID = index + Self.pageSize >= storyIDs.endIndex ? nil : storyIDs[index + Self.pageSize]
+        let queue = DispatchQueue(label: "tw.rance.feed.story", attributes: .concurrent)
+        let group = DispatchGroup()
+        var storyMap = [Int: Story]()
 
-        service.loadItem(id: story.id) { [weak self] (result: Result<Story, Error>) in
-            guard let sself = self else { return }
-            switch result {
-            case let .success(story):
-                if let index = sself.stories.firstIndex(of: story) {
-                    let realm = sself.realmProvider.realm()
-                    if story.isHidden {
-                        sself.stories.remove(at: index)
-
-                        let realmStories = realm.objects(RealmStory.self).filter("id = \(story.id)")
-                        try? realm.write {
-                            realm.delete(realmStories)
+        ids.forEach { [weak self] id in
+            group.enter()
+            self?.service.loadItem(id: id) { (result: Result<Story, Error>) in
+                switch result {
+                case let .success(story):
+                    if !story.isHidden {
+                        queue.sync(flags: .barrier) {
+                            storyMap[id] = story
                         }
-                        completion(.failure(MainViewModelError.hiddenItem))
-                    } else {
-                        sself.stories[index] = story
-                        try? realm.write {
-                            realm.add(RealmStory(story: story), update: .modified)
-                        }
-                        completion(.success(story))
                     }
+                case .failure:
+                    break
                 }
-            case let .failure(error):
-                completion(.failure(error))
+                group.leave()
             }
+        }
+        group.notify(queue: DispatchQueue.global()) {
+            let stories: [Story] = ids.reduce(into: []) {
+                if let story = storyMap[$1] {
+                    $0.append(story)
+                }
+            }
+            self.stories.append(contentsOf: stories)
+            let realm = self.realmProvider.realm()
+            let realmStories = stories.map { RealmStory(story: $0) }
+
+            try? realm.write {
+                realm.add(realmStories)
+            }
+            completion(nextID)
         }
     }
 }

@@ -33,10 +33,6 @@ class Item: Decodable {
         case isDead = "dead"
     }
 
-    var isLoaded: Bool {
-        creationTime != nil
-    }
-
     var isHidden: Bool {
         isDeleted == true || isDead == true
     }
